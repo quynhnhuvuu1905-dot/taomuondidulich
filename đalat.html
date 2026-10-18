@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kế Hoạch Du Lịch Đà Lạt - nq & Friends</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2D3C59;       
+            --primary-hover: #1e2738;
+            --accent-green: #94A378;  
+            --accent-yellow: #E5BA41; 
+            --accent-orange: #D1855C; 
+            --dark: #2d3436;
+            --light: #f4f6f9;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- MÀN HÌNH BẢO MẬT 3D (RANDOM 1 CÂU) --- */
+        #auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #1f2a40, #2D3C59, #3d5178);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: #ffffff;
+            padding: 40px 35px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
+                        0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+                        0 5px 15px rgba(45, 60, 89, 0.2);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .auth-card p {
+            color: #636e72;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        /* --- THANH BÊN (SIDEBAR) 3D --- */
+        sidebar {
+            width: var(--sidebar-width);
+            background: var(--primary);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 6px 0 20px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px 20px;
+            z-index: 100;
+        }
+
+        .sidebar-brand h2 {
+            color: var(--accent-yellow);
+            font-size: 22px;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .sidebar-brand p {
+            font-size: 13px;
+            color: #d1d8e0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin-top: 30px;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 12px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: #d1d8e0;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: var(--accent-orange);
+            color: white;
+            transform: translateX(6px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(209, 133, 92, 0.4);
+        }
+
+        /* --- NỘI DUNG CHÍNH --- */
+        main {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 40px;
+            max-width: calc(100vw - var(--sidebar-width));
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeInContent 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05),
+                        0 1px 3px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .sheet-container {
+            width: 100%;
+            height: 650px;
+            border: none;
+            border-radius: 14px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        input[type="text"], input[type="date"], select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            background: #fafbfc;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, select:focus {
+            border-color: var(--accent-orange);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(209, 133, 92, 0.15);
+        }
+
+        /* Phần nút tròn chọn địa điểm khác */
+        .radio-grid-round {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .radio-round-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: #fff;
+            border: 2px solid #e2e8f0;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .radio-round-label input[type="radio"] {
+            accent-color: var(--accent-orange);
+            width: 16px;
+            height: 16px;
+        }
+
+        .radio-round-label:hover {
+            border-color: var(--accent-orange);
+            background: #fff5f2;
+        }
+
+        .color-grid {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .color-option {
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 8px;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .color-option input { display: none; }
+        .color-swatch {
+            width: 25px; height: 25px; border-radius: 50%; margin: 0 auto 5px auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .color-option.selected { border-color: var(--accent-orange); background: #fff5f2; }
+
+        button {
+            background: linear-gradient(135deg, var(--accent-orange), #b56e49);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 6px 15px rgba(209, 133, 92, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(209, 133, 92, 0.5);
+        }
+
+        .error-msg {
+            color: #e53e3e;
+            font-size: 13px;
+            margin-top: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- MODAL MEME (TỐI MÀN HÌNH, XÓA NỀN, NÚT X GÓC TRÁI) --- */
+        #meme-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+        }
+
+        .meme-box {
+            background: white;
+            padding: 35px 25px 25px 25px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            position: relative;
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 12px;
+            left: 15px;
+            background: #f1f2f6;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: bold;
+            color: #2d3436;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #dfe4ea;
+            color: #e53e3e;
+        }
+
+        .meme-box img {
+            max-width: 100%;
+            max-height: 240px;
+            border-radius: 12px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            object-fit: contain;
+            background: transparent;
+        }
+
+        @keyframes popUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeInContent { 
+            from { opacity: 0; transform: translateY(12px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        @media(max-width: 768px) {
+            sidebar { width: 70px; padding: 20px 10px; }
+            sidebar .sidebar-brand, sidebar span { display: none; }
+            main { margin-left: 70px; max-width: calc(100vw - 70px); padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MÀN HÌNH BẢO MẬT 3D (RANDOM 1 TRONG 4 CÂU HỎI) -->
+    <div id="auth-overlay">
+        <div class="auth-card">
+            <h2>🔒 Xác Thực Truy Cập</h2>
+            <p>Vui lòng trả lời câu hỏi bí mật sau để vào xem kế hoạch:</p>
+            
+            <div style="margin-bottom: 18px;">
+                <label id="question-label" style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--primary); font-size: 16px;"></label>
+                <div id="dynamic-input-slot"></div>
+                <div id="auth-error" class="error-msg">❌ Sai rồi! Bái bai bạn nhé! 👋</div>
+            </div>
+
+            <button onclick="checkRandomAnswer()">Mở Cửa Vào Web 🚀</button>
+        </div>
+    </div>
+
+    <!-- MODAL MEME -->
+    <div id="meme-modal">
+        <div class="meme-box">
+            <button class="close-btn" onclick="closeMeme()">✕</button>
+            <img id="meme-img" src="" alt="Meme">
+            <h3 id="meme-text" style="color: var(--primary); margin-bottom: 5px; font-size: 16px;"></h3>
+        </div>
+    </div>
+
+    <!-- THANH BÊN (SIDEBAR) -->
+    <sidebar>
+        <div>
+            <div class="sidebar-brand">
+                <h2>🌲 Kế Hoạch Đà Lạt</h2>
+                <p>Trip Planner by nq</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" onclick="switchTab('plan', event)" class="active">📊 <span>Kế Hoạch Đà Lạt</span></a></li>
+                <li><a href="#" onclick="switchTab('register', event)">✍️ <span>Đăng Ký Tham Gia</span></a></li>
+            </ul>
+        </div>
+        <div style="font-size: 12px; color: #a4b0be; text-align: center;">
+            Made with ❤️ by nq
+        </div>
+    </sidebar>
+
+    <!-- NỘI DUNG CHÍNH -->
+    <main>
+        <div id="plan" class="tab-content active">
+            <div class="card">
+                <h2>📊 Bảng Kế Hoạch Chi Tiết Đà Lạt</h2>
+                <p style="margin-bottom: 15px; color: #636e72;">Dưới đây là thông tin chi tiết từ Sheet kế hoạch chính thức:</p>
+                <iframe class="sheet-container" src="https://docs.google.com/spreadsheets/d/19JmhdBsMBHmlLnm9JRwZ-gyGeLBmGMZgKGp9lcUlXcA/edit?usp=sharing&single=true&widget=true&headers=false"></iframe>
+            </div>
+        </div>
+
+        <div id="register" class="tab-content">
+            <div class="card">
+                <h2>✍️ Đăng Ký Tham Gia & Khảo Sát</h2>
+                <form id="trip-form" onsubmit="submitForm(event)">
+                    <div class="form-group">
+                        <label>Đi Đà Lạt khong bà oi?</label>
+                        <select id="wantToGo" onchange="toggleFormFields()" required>
+                            <option value="">-- Lựa chọn của bạn --</option>
+                            <option value="yes">Đi, đi liền nè</option>
+                            <option value="no">Không, khi khác đi đm</option>
+                        </select>
+                    </div>
+
+                    <div id="extra-fields" style="display: none;">
+                        <div class="form-group">
+                            <label>Họ và tên của bạn:</label>
+                            <input type="text" id="fullname" placeholder="Nhập tên bạn (hoặc bạn 1, bạn 2,...)..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ngày/tháng/năm muốn đi:</label>
+                            <input type="date" id="trip-date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phương tiện di chuyển ưa thích:</label>
+                            <select id="transport" required>
+                                <option value="">-- Chọn phương tiện --</option>
+                                <option value="Máy bay">Máy bay</option>
+                                <option value="Xe khách">Xe khách</option>
+                            </select>
+                        </div>
+
+                        <!-- PHẦN LỰA CHỌN ĐỊA ĐIỂM KHÁC (NÚT TRÒN) -->
+                        <div class="form-group">
+                            <label>Hoặc địa điểm khác bạn muốn đi:</label>
+                            <div class="radio-grid-round">
+                                <label class="radio-round-label" onclick="selectDest(this, 'Hội An')">
+                                    <input type="radio" name="other_dest" value="Hội An"> Hội An
+                                </label>
+                                <label class="radio-round-label" onclick="selectDest(this, 'Đà Nẵng')">
+                                    <input type="radio" name="other_dest" value="Đà Nẵng"> Đà Nẵng
+                                </label>
+                                <label class="radio-round-label" onclick="selectDest(this, 'Huế')">
+                                    <input type="radio" name="other_dest" value="Huế"> Huế
+                                </label>
+                                <label class="radio-round-label" onclick="selectDest(this, 'Ninh Bình')">
+                                    <input type="radio" name="other_dest" value="Ninh Bình"> Ninh Bình
+                                </label>
+                                <label class="radio-round-label" onclick="selectDest(this, 'Hà Nội')">
+                                    <input type="radio" name="other_dest" value="Hà Nội"> Hà Nội
+                                </label>
+                                <label class="radio-round-label" onclick="selectDest(this, 'Nam Định')">
+                                    <input type="radio" name="other_dest" value="Nam Định"> Nam Định
+                                </label>
+                                <label class="radio-round-label" onclick="selectDest(this, 'Gia Lai')">
+                                    <input type="radio" name="other_dest" value="Gia Lai"> Gia Lai
+                                </label>
+                                <label class="radio-round-label" onclick="selectDest(this, 'Vũng Tàu')">
+                                    <input type="radio" name="other_dest" value="Vũng Tàu"> Vũng Tàu
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Biết lái xe không?</label>
+                            <div style="display:flex; gap:20px;">
+                                <label><input type="radio" name="drive" value="Có" required> Có</label>
+                                <label><input type="radio" name="drive" value="Không"> Không</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Có sợ ma không?</label>
+                            <div style="display:flex; gap:20px;">
+                                <label><input type="radio" name="ghost" value="Có" required> Có</label>
+                                <label><input type="radio" name="ghost" value="Không"> Không</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Có biết nướng thịt không?</label>
+                            <div style="display:flex; gap:20px;">
+                                <label><input type="radio" name="bbq" value="Có" required> Có</label>
+                                <label><input type="radio" name="bbq" value="Không"> Không</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Có quen nq không?</label>
+                            <div style="display:flex; gap:20px;">
+                                <label><input type="radio" name="nq_know" value="Có" required> Có</label>
+                                <label><input type="radio" name="nq_know" value="Không"> Không</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" style="margin-top: 15px;">Gửi Thông Tin Đăng Ký ✈️</button>
+                    </div>
+
+                    <div id="refusal-msg" style="display: none; text-align: center; color: #636e72; padding: 20px;">
+                        Hơi tiếc nha! Hẹn gặp lại bạn ở các chuyến đi sau nhé. 😊
+                    </div>
+                </form>
+
+                <div id="success-msg" style="display: none; text-align: center; padding: 30px;">
+                    <h3 style="color: var(--accent-green);">🎉 Đăng Ký Thành Công!</h3>
+                    <p>Thông tin của bạn đã được ghi nhận. nq sẽ liên hệ lại sớm nhất!</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const questionPool = [
+            { type: "text", q: "nq thích ăn gì?", ans: ["gà", "ga", "thịt gà", "thit ga"] },
+            { type: "text", q: "Sinh nhật nq ngày bao nhiêu?", ans: ["1/9", "01/09", "1", "1/9/2005", "1-9"] },
+            { 
+                type: "color", 
+                q: "nq thích màu gì?", 
+                colors: ["Đỏ", "Hồng", "Xanh dương", "Vàng"],
+                hexes: ["#ff4d4d", "#ff758c", "#3498db", "#f1c40f"]
+            },
+            { type: "text", q: "nq thích ai?", ans: ["*"] }
+        ];
+
+        let chosenQ = {};
+
+        function initRandomQuestion() {
+            const randIdx = Math.floor(Math.random() * questionPool.length);
+            chosenQ = questionPool[randIdx];
+
+            document.getElementById("question-label").innerText = chosenQ.q;
+            const slot = document.getElementById("dynamic-input-slot");
+
+            if (chosenQ.type === "text") {
+                slot.innerHTML = `<input type="text" id="random-answer" placeholder="Nhập câu trả lời của bạn...">`;
+                document.getElementById("random-answer").addEventListener("keypress", function(e) {
+                    if (e.key === "Enter") checkRandomAnswer();
+                });
+            } else if (chosenQ.type === "color") {
+                let html = `<div class="color-grid">`;
+                for (let i = 0; i < chosenQ.colors.length; i++) {
+                    html += `
+                        <label class="color-option" onclick="selectColorOption(this)">
+                            <div class="color-swatch" style="background:${chosenQ.hexes[i]}"></div>
+                            <span>${chosenQ.colors[i]}</span>
+                            <input type="radio" name="color_choice" value="${chosenQ.colors[i]}">
+                        </label>
+                    `;
+                }
+                html += `</div>`;
+                slot.innerHTML = html;
+            }
+        }
+
+        function selectColorOption(el) {
+            document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            el.querySelector('input').checked = true;
+        }
+
+        initRandomQuestion();
+
+        function checkRandomAnswer() {
+            const err = document.getElementById("auth-error");
+
+            if (chosenQ.type === "text") {
+                const val = document.getElementById("random-answer").value.trim().toLowerCase();
+                if (chosenQ.q === "nq thích ai?") {
+                    showMeme("câu hỏi", "nghị cái gì z má!!!!!!!!");
+                    return;
+                }
+                if (chosenQ.ans.includes(val)) {
+                    document.getElementById("auth-overlay").style.display = "none";
+                } else {
+                    err.style.display = "block";
+                    // Trả lời sai -> Đá ra khỏi trang ngay lập tức sau 1 giây
+                    setTimeout(() => {
+                        window.location.href = "about:blank"; 
+                    }, 1000);
+                }
+            } else if (chosenQ.type === "color") {
+                const checked = document.querySelector('input[name="color_choice"]:checked');
+                if (checked) {
+                    document.getElementById("auth-overlay").style.display = "none";
+                } else {
+                    err.style.display = "block";
+                    setTimeout(() => {
+                        window.location.href = "about:blank";
+                    }, 1000);
+                }
+            }
+        }
+
+        function selectDest(element, destName) {
+            document.querySelectorAll('.radio-round-label').forEach(el => el.style.borderColor = "#e2e8f0");
+            element.style.borderColor = "var(--accent-orange)";
+            element.querySelector('input').checked = true;
+
+            if (destName === "Hội An") {
+                showMeme("Hội An", "ừ nq cũng muốn đi Hội An á");
+            } else if (destName === "Gia Lai") {
+                showMeme("Gia Lai", "bộ m muốn về ra mắt mẹ t hay gì");
+            } else if (destName === "Vũng Tàu") {
+                showMeme("Vũng Tàu", "M có bíc gì đúm hok");
+            }
+        }
+
+        function showMeme(memeName, captionText) {
+            // Link chuẩn trực tiếp từ Google Drive của bạn
+            const memeLinks = {
+                "Hội An": "https://lh3.googleusercontent.com/d/1KEQ6ftKKcSR5rxRlQNakb-xFL64RreE5",
+                "Gia Lai": "https://lh3.googleusercontent.com/d/1vRGaSAwcGl7mHPuWBv3nEQl030Oxwk95",
+                "Vũng Tàu": "https://lh3.googleusercontent.com/d/1q6DR0cwrbDMuRPH3AClB9WA4qLaDpBaY",
+                "câu hỏi": "https://lh3.googleusercontent.com/d/1pBDdR7-ZEoAhBN6DyXNgIeV8cjK-6bJI"
+            };
+
+            document.getElementById("meme-img").src = memeLinks[memeName] || memeLinks["Hội An"];
+            document.getElementById("meme-text").innerText = captionText;
+            document.getElementById("meme-modal").style.display = "flex";
+        }
+
+        function closeMeme() {
+            document.getElementById("meme-modal").style.display = "none";
+            if (chosenQ.q === "nq thích ai?") {
+                document.getElementById("auth-overlay").style.display = "none";
+            }
+        }
+
+        function switchTab(tabId, event) {
+            if(event) event.preventDefault();
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sidebar-menu a').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if(event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+        }
+
+        function toggleFormFields() {
+            const val = document.getElementById("wantToGo").value;
+            const extra = document.getElementById("extra-fields");
+            const refusal = document.getElementById("refusal-msg");
+
+            if (val === "yes") {
+                extra.style.display = "block";
+                refusal.style.display = "none";
+            } else if (val === "no") {
+                extra.style.display = "none";
+                refusal.style.display = "block";
+            } else {
+                extra.style.display = "none";
+                refusal.style.display = "none";
+            }
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            document.getElementById("trip-form").style.display = "none";
+            document.getElementById("success-msg").style.display = "block";
+        }
+    </script>
+</body>
+</html>
